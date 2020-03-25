@@ -16,16 +16,47 @@ from PIL import ImageTk, Image
 import os
 
 
-def open_file(panel):
+def open_file(arg):
 
-    l_panel = panel
-    global img1
-    global img
+    l_panel = arg[0]
+    lable_width = arg[1]
+    lable_height = arg[2]
+
+    global PIL_img
+    global TK_img
+
     file_name = fd.askopenfilename()
-    img1 = Image.open(file_name)
-    img1 = img1.resize((400, 400), Image.ANTIALIAS)#
-    img = ImageTk.PhotoImage(img1) 
-    l_panel['image'] = img
+
+    PIL_img = Image.open(file_name)
+
+    width_img = PIL_img.width
+    height_img = PIL_img.height
+
+    print(width_img, height_img)
+
+    if (width_img > height_img):
+        width_new = lable_width
+        k_resize = round(lable_width * 100 / width_img)
+        height_new = round(height_img * k_resize / 100)
+
+    elif (width_img < height_img):
+        height_new = lable_height
+        k_resize = round(lable_height * 100 / height_img)
+        width_new = round(width_img * k_resize / 100)
+
+    else:
+        # width_img = height_img
+        if (lable_width > lable_height):
+            width_new = lable_height
+            height_new = lable_height
+
+        elif(lable_width <= lable_height):
+            width_new = lable_width
+            height_new = lable_width
+
+    PIL_img = PIL_img.resize((width_new, height_new), Image.ANTIALIAS)#
+    TK_img = ImageTk.PhotoImage(PIL_img) 
+    l_panel['image'] = TK_img
 
 
 
@@ -35,9 +66,14 @@ def main():
     root = Tk()
     root.geometry('400x400') #'200x200'
 
+    WLABEL = 400
+    HLABEL = 400
+
     l_panel = Label(root, width = 40, height = 10) 
     
-    b_open_file = Button(text = 'Открыть', command = lambda panel = l_panel: open_file(panel))
+    b_arg_list = [l_panel, WLABEL, HLABEL]
+    b_open_file = Button(text = 'Открыть', command = lambda arg = b_arg_list: open_file(arg))
+    #b_open_file = Button(text = 'Открыть', command = lambda panel = l_panel: open_file(panel))
     #b_open_file.bind('<Button-1>', lambda event, panel = l_panel: open_file(event, panel))
 
 
