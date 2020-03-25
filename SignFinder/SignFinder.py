@@ -16,8 +16,6 @@ from PIL import ImageTk, Image
 import os
 
 
-
-
 def open_file(panel):
 
     l_panel = panel
