@@ -5,6 +5,7 @@ import numpy as np
 #import cbr as cb
 #Функция вычисления хэша
 def CalcImageHash(image,width,height):
+    '''Вычисление хэша'''
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) #Переведем в черно-белый формат
     avg=gray_image.mean() #Среднее значение пикселя
     ret, threshold_image = cv2.threshold(gray_image, avg, 255, 0) #Бинаризация по порогу
@@ -22,6 +23,7 @@ def CalcImageHash(image,width,height):
     return _hash
 
 def CornerCount(image):
+    '''Подсчёт углов'''
     operatedImage = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) 
   
 # изменить тип данных
@@ -31,7 +33,7 @@ def CornerCount(image):
 # применить метод cv2.cornerHarris
 # для определения углов с соответствующими
 # значения в качестве входных параметров
-    dest = cv2.cornerHarris(operatedImage, 2, 1, 0.05) 
+    dest = cv2.cornerHarris(operatedImage, 3, 23, 0.04) 
   
 # Результаты отмечены через расширенные углы
     dest = cv2.dilate(dest, None)
@@ -39,11 +41,12 @@ def CornerCount(image):
     maximum = dest.max()
     for ap in dest:
         for bp in ap:
-            if bp > 0.9 * maximum:
+            if bp > 0.01 * maximum:
                 corners = corners + 1
     return corners
 
 def img_cropper(image):
+    '''Кадрирование изображения'''
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) #Переведем в черно-белый формат
     avg=gray_image.mean() #Среднее значение пикселя
     ret, threshold_image = cv2.threshold(gray_image, avg, 255, 0) #Бинаризация по порогу
@@ -79,6 +82,7 @@ def img_cropper(image):
             break   
     return image[y:h,x:w]
 def CompareHash(hash1,hash2):
+    '''Сравнение хэшей'''
     l=len(hash1)
     i=0
     count=0
@@ -91,10 +95,10 @@ width=100
 height=100
 reals=[]
 forges=[]
-for root, dirs, files in os.walk("scr/msgn"):  
+for root, dirs, files in os.walk("scr/real"):  
     for filename in files:
-        reals.append("scr/msgn/" + filename)
-for a in reals:
+        reals.append("scr/real/" + filename)
+for a in reals[1:2]:
     for b in reals:
         if a!=b:
             pic1=cv2.imread(a) #Прочитаем картинку
@@ -107,6 +111,10 @@ for a in reals:
             #print(hash1)
             #print(hash2)
             print(str(CompareHash(hash1, hash2))+"| "+ str(CornerCount(pic1))+"| "+str(CornerCount(pic2)))
-cv2.imshow('Image with Borders', pic1)
+
+gray_image = cv2.cvtColor(pic2, cv2.COLOR_BGR2GRAY) #Переведем в черно-белый формат
+avg=gray_image.mean() #Среднее значение пикселя
+ret, threshold_image = cv2.threshold(gray_image, avg, 255, 0) #Бинаризация по порогу
+cv2.imshow('Image with Borders', threshold_image)
 if cv2.waitKey(0) & 0xff == 27: 
-    cv2.destroyAllWindows() 
+    cv2.destroyAllWindows()
