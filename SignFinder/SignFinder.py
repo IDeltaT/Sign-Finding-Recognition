@@ -16,7 +16,58 @@ from PIL import ImageTk, Image
 import os
 
 
+def calculation_of_new_sizes(width_img, height_img, lable_width, lable_height):
+    """
+    Расчет новых размеров изображения, в соответствии с размерами рамки
+
+    :param width_img: Исходная ширина изображения
+    :type width_img:  int
+
+    :param height_img: Исходная высота изображения
+    :type height_img:  int
+
+    :param lable_width: Ширина окна
+    :type lable_width:  int
+
+    :param lable_height: Высота окна
+    :type lable_height:  int 
+    
+    :return: Возврощает список: [новая ширина, новая высота]
+    :rtype: list
+    """
+
+    if (width_img > height_img):
+        width_new = lable_width
+        k_resize = round(lable_width * 100 / width_img)
+        height_new = round(height_img * k_resize / 100)
+
+    elif (width_img < height_img):
+        height_new = lable_height
+        k_resize = round(lable_height * 100 / height_img)
+        width_new = round(width_img * k_resize / 100)
+
+    else:
+        # если width_img = height_img
+        if (lable_width > lable_height):
+            width_new = lable_height
+            height_new = lable_height
+
+        elif(lable_width <= lable_height):
+            width_new = lable_width
+            height_new = lable_width
+
+    return [width_new, height_new]
+
+
 def open_file(arg):
+    """
+    Считывание указанного (в проводнике) изображения, перерасчет его размеров и
+    присваивание этого изображения объекту Label
+
+    :param arg: Список: [ссылка на объект рамки (Label), ширина рамки, высота рамки]
+    :type arg:  list
+
+    """
 
     l_panel = arg[0]
     lable_width = arg[1]
@@ -32,27 +83,9 @@ def open_file(arg):
     width_img = PIL_img.width
     height_img = PIL_img.height
 
-    print(width_img, height_img)
-
-    if (width_img > height_img):
-        width_new = lable_width
-        k_resize = round(lable_width * 100 / width_img)
-        height_new = round(height_img * k_resize / 100)
-
-    elif (width_img < height_img):
-        height_new = lable_height
-        k_resize = round(lable_height * 100 / height_img)
-        width_new = round(width_img * k_resize / 100)
-
-    else:
-        # width_img = height_img
-        if (lable_width > lable_height):
-            width_new = lable_height
-            height_new = lable_height
-
-        elif(lable_width <= lable_height):
-            width_new = lable_width
-            height_new = lable_width
+    new_size = calculation_of_new_sizes(width_img, height_img, lable_width, lable_height)
+    width_new = new_size[0]
+    height_new = new_size[1]
 
     PIL_img = PIL_img.resize((width_new, height_new), Image.ANTIALIAS)#
     TK_img = ImageTk.PhotoImage(PIL_img) 
