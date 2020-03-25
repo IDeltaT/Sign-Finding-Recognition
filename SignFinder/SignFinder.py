@@ -97,24 +97,44 @@ def main():
     ''' Главная функция '''
 
     root = Tk()
-    root.geometry('400x400') #'200x200'
+    root.geometry('1000x600') #'200x200'
 
     WLABEL = 400
-    HLABEL = 400
+    HLABEL = 520
 
-    l_panel = Label(root, width = 40, height = 10) 
+    f_left = Frame(root)
+
+    f_source_img = LabelFrame(root, text = "Исходное изображение", width = 420, height = 520,)
+    f_processed_img = LabelFrame(root, text = "Обработанное изображение", width = 420, height = 520)
+
+    l_panel_source = Label(root) 
+
+    label_test = Label(text = "123")
     
-    b_arg_list = [l_panel, WLABEL, HLABEL]
-    b_open_file = Button(text = 'Открыть', command = lambda arg = b_arg_list: open_file(arg))
+    b_arg_list = [l_panel_source, WLABEL, HLABEL]
+    b_open_file = Button(f_left, text = 'Открыть', width = 10, command = lambda arg = b_arg_list: open_file(arg))
+
+    b_process = Button(f_left, text = 'Обработать', width = 10)
     #b_open_file = Button(text = 'Открыть', command = lambda panel = l_panel: open_file(panel))
     #b_open_file.bind('<Button-1>', lambda event, panel = l_panel: open_file(event, panel))
 
+    f_source_img.grid(row = 0, column = 1, columnspan = 10, rowspan = 13, ipady=16, )
+    f_processed_img.grid(row = 0, column = 15, columnspan = 10, rowspan = 13, ipady=16,)
+    l_panel_source.grid(row = 1, column = 1, columnspan = 10, rowspan = 13,)
 
-    l_panel.pack(side = "bottom", fill = "both", expand = "yes")
-    b_open_file.pack()
+    #b_open_file.grid(row = 0, column = 0, padx = 5, ipady = 5)
+    #b_process.grid(row = 1, column = 0, padx = 5, ipady = 5,)
+
+    f_left.grid(row = 0, column = 0, rowspan = 2, ipady=6, padx = 5)
+    b_open_file.pack(pady = 1)
+    b_process.pack(pady = 1)
+    
+
+    label_test.grid(row = 14, column = 0, padx = 5,)
+    print(root.grid_size()) 
 
     root.mainloop()
-
+    
 
 
 
