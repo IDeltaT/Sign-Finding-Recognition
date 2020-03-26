@@ -76,7 +76,8 @@ def open_file(arg):
     global PIL_img
     global TK_img
 
-    file_name = fd.askopenfilename()
+    file_name = fd.askopenfilename(filetypes = (("PNG", "*.png"),
+                                                ("JPG", "*.jpg")))
 
     PIL_img = Image.open(file_name)
 
@@ -97,6 +98,11 @@ def main():
 
     root = Tk()
     root.geometry('1000x600') #'200x200'
+    root.resizable(False, False) # Запрет на изменение размеров окна
+    root.title("Finder")
+
+    main_menu = Menu(root) 
+    root.config(menu = main_menu)
 
     WLABEL = 400
     HLABEL = 520
@@ -128,6 +134,21 @@ def main():
     b_open_file.pack(pady = 1)
     b_process.pack(pady = 1)
     
+    #region Menu
+
+    file_menu = Menu(main_menu, tearoff = 0)
+    file_menu.add_command(label = "Открыть...", command = lambda arg = b_arg_list: open_file(arg))
+    file_menu.add_command(label = "Новый")
+    file_menu.add_command(label = "Сохранить...")
+    file_menu.add_command(label = "Выход")
+ 
+    help_menu = Menu(main_menu, tearoff = 0)
+    help_menu.add_command(label = "Помощь")
+    help_menu.add_command(label = "О программе")
+ 
+    main_menu.add_cascade(label = "Файл", menu = file_menu)
+    main_menu.add_cascade(label = "Справка", menu = help_menu)
+    #endregion
 
     label_test.grid(row = 14, column = 0, padx = 5,)
     print(root.grid_size()) 
