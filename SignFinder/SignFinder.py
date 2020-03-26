@@ -93,6 +93,7 @@ def open_file(arg):
     l_panel['image'] = TK_img
 
 
+
 def main():
     ''' Главная функция '''
 
