@@ -154,6 +154,3 @@ for a in reals[6:7]:
             print("| Hash :"+str(thash)+"| Match: "+ str(tmp[0])+"| Diffs: "+ str(tmp[1])+"| Corners : "+ str(CornerCount(pic1) - CornerCount(pic2))+"|")
     print("| ExitParans  "+ "| Hash :"+str(Mhash)+"| Match: "+ str(Matches)+"| Diffs: "+ str(Diffs)+"|")
     print("OwnerId:" + OwnerId)
-
-if cv2.waitKey(0) & 0xff == 27: 
-    cv2.destroyAllWindows()
