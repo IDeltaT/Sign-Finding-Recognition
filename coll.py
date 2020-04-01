@@ -120,10 +120,10 @@ height=200
 reals=[]
 forges=[]
 #msgn real
-for root, dirs, files in os.walk("scr/msgn"):
+for root, dirs, files in os.walk("scr/real"):
     for filename in files:
-        reals.append("scr/msgn/" + filename)
-for a in reals[6:7]:
+        reals.append("scr/real/" + filename)
+for a in reals[22:23]:
     Matches=0
     Diffs=width*height
     Mhash=Diffs
@@ -140,17 +140,15 @@ for a in reals[6:7]:
             hash1 = CalcImageHash(pic1)
             hash2 = CalcImageHash(pic2)
             thash = CompareHash(hash1,hash2)
-            if tmp[0]>Matches:
-                Matches=tmp[0]
-                if thash < Mhash:
-                    Mhash=thash
+            if thash < Mhash:
+                Mhash = thash
+                if tmp[0]>Matches:
+                    Matches=tmp[0]
                     Diffs=width*height
                     if tmp[1] < Diffs:
                         Diffs=tmp[1]
-                        OwnerId=b.split("/")[-1][:3] #Записываем id хозяина подписи
+                        OwnerId=b.split("/")[-1][:3]
             print(a+ " " + b)
-            #print(hash1)
-            #print(hash2)
             print("| Hash :"+str(thash)+"| Match: "+ str(tmp[0])+"| Diffs: "+ str(tmp[1])+"| Corners : "+ str(CornerCount(pic1) - CornerCount(pic2))+"|")
     print("| ExitParans  "+ "| Hash :"+str(Mhash)+"| Match: "+ str(Matches)+"| Diffs: "+ str(Diffs)+"|")
     print("OwnerId:" + OwnerId)
