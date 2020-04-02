@@ -135,8 +135,6 @@ for a in reals[35:36]:
     OwnerId = 0
     tmp = 0
     thash = 0
-    tcorn = Diffs
-    mCorners = 0
     pic1 = cv2.imread(a)  # Прочитаем картинку
     pic1 = cv2.resize(img_cropper(pic1), (width, height), interpolation=cv2.INTER_AREA)  # Уменьшим картинку
     rex = reals.copy()
@@ -148,7 +146,7 @@ for a in reals[35:36]:
         hash1 = CalcImageHash(pic1)
         hash2 = CalcImageHash(pic2)
         thash = CompareHash(hash1, hash2)
-        tcorn = abs(CornerCount(pic1) - CornerCount(pic2))
+        #tcorn = abs(CornerCount(pic1) - CornerCount(pic2))
         if thash < Mhash:
             Mhash = thash
             if tmp[0] > Matches:
@@ -158,8 +156,6 @@ for a in reals[35:36]:
                     Diffs = tmp[1]
                     OwnerId = b.split("/")[-1][:3]
         print(a + " " + b)
-        # print(hash1)
-        # print(hash2)
         print("| Hash :" + str(thash) + "| Match: " + str(tmp[0]) + "| Diffs: " + str(
             tmp[1]) + "|")  # "| Corners : "+ str(tcorn)+"|")
     print("| ExitParans  " + "| Hash :" + str(Mhash) + "| Match: " + str(Matches) + "| Diffs: " + str(Diffs) + "|")
