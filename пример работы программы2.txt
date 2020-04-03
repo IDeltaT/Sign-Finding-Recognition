@@ -453,4 +453,4 @@ scr/STI/3.png scr/real/01504015.png
 
 Хозяин подписи scr/STI/3.png: М.М. Казарян
 
-Process finished with exit code 0
+Process finished with exit code 0 
