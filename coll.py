@@ -138,14 +138,16 @@ height = 100
 reals = []
 signs_to_identify = []
 signs_db_path="scr/real"# msgn real
-signs_tIdentify_path="scr/real"
+signs_tIdentify_path="scr/STI"
 for root, dirs, files in os.walk(signs_db_path): #Пути к файлам из базы
     for filename in files:
         reals.append(signs_db_path+"/" + filename)
-for root, dirs, files in os.walk(signs_tIdentify_path): #Пути к файлам из базы
+for root, dirs, files in os.walk(signs_tIdentify_path): #Пути к файлам из базы обнаруженных подписей
     for filename in files:
         signs_to_identify.append(signs_tIdentify_path+"/" + filename)
-for a in signs_to_identify[65:66]:
+report = open("report.txt",'w',encoding='utf-8')
+rex=reals
+for a in signs_to_identify:
     Matches = 0
     Diffs = width * height
     Mhash = Diffs
@@ -154,7 +156,7 @@ for a in signs_to_identify[65:66]:
     thash = 0
     pic1 = cv2.imread(a)  # Прочитаем картинку
     pic1 = cv2.resize(img_cropper(pic1), (width, height), interpolation=cv2.INTER_AREA)  # Уменьшим картинку
-    if signs_tIdentify_path==signs_db_path:
+    if signs_tIdentify_path==signs_db_path: #Исключаем рассматриваемую подпись из базы, если исследуемая подпись берётся из неё же
         rex = reals.copy()
         rex.remove(a)
     for b in rex:
@@ -177,4 +179,7 @@ for a in signs_to_identify[65:66]:
         print("| Хэш: " + str(thash) + "| Совпадения: " + str(tmp[0]) + "| Различия: " + str(
             tmp[1]) + "|")  # "| Corners : "+ str(tcorn)+"|")
     print("| Выходные значения:  " + "| Хэш: " + str(Mhash) + "| Совпадения: " + str(Matches) + "| Различия: " + str(Diffs) + "|")
-    print("Хозяин подписи {}: {}".format(a, owner_show(OwnerId)))
+    OWNER=owner_show(OwnerId)
+    report.write("{}: {}\n".format(a, OWNER))
+    print("Хозяин подписи {}: {}".format(a, OWNER))
+report.close()
