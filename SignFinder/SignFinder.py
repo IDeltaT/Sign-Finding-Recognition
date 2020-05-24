@@ -130,6 +130,7 @@ def open_json_file(e_json_path):
     e_json_path.delete(0, END)
     e_json_path.insert(0, file_name)
 
+
 def load_model(arg): 
     """
     Загрузка готовой модели.
@@ -216,7 +217,13 @@ def process_file(arg):
             global PIL_img_n
             global TK_img_n
 
-            detections = detector.detector.detectObjectsFromImage(input_image = detector.image_path, output_image_path = "image000.jpg", minimum_percentage_probability = 10)
+            detections = detector.detector.detectObjectsFromImage(input_image = detector.image_path,
+                                                                  output_image_path = "image000.jpg",
+                                                                  minimum_percentage_probability = 15,
+                                                                  display_percentage_probability = False,
+                                                                  display_object_name = False,
+                                                                  thread_safe = True,
+                                                                  )
             print(detections)
     
             # Вывод кординат и процентов совпадения подписей в консоль
@@ -275,12 +282,12 @@ def main():
     f_left.configure(bg = '#dddddd')
 
     #Окно отображающее не обработанное изображение
-    f_source_img = LabelFrame(root, text = "Исходное изображение", width = 420, height = 520,)
+    f_source_img = LabelFrame(root, text = "Исходное изображение", width = 420, height = 520,) 
     l_panel_source = Label(root) 
     
     #Окно отображающее обработанное изображение
     f_processed_img = LabelFrame(root, text = "Обработанное изображение", width = 420, height = 520)
-    l_panel_processed = Label(root) 
+    l_panel_processed = Label(root)
 
 
     #Нижнее меню
@@ -290,6 +297,12 @@ def main():
     t_console = Text(width = 50, height = 6)
     scroll_console = Scrollbar(command = t_console.yview, orient="vertical")
     t_console.config(yscrollcommand=scroll_console.set)
+
+    #Тег ошибки (красный цвет текста)
+    t_console.tag_config('warning', foreground="red")
+
+    t_console.insert("end", "Загрзите модель и json файл!", 'warning')
+    t_console.see("end")
 
     #Выбор пути к модели и json
     l_model_path = Label(text = "Директория модели:")
@@ -313,9 +326,9 @@ def main():
 
 
     #Упаковка центральных окон
-    f_source_img.grid(row = 0, column = 1, columnspan = 10, rowspan = 13, ipady=16,)
-    f_processed_img.grid(row = 0, column = 15, columnspan = 10, rowspan = 13, ipady=16,)
-    l_panel_source.grid(row = 1, column = 1, columnspan = 10, rowspan = 13,)
+    f_source_img.grid(row = 0, column = 1, columnspan = 10, rowspan = 13, ipady = 16,)
+    f_processed_img.grid(row = 0, column = 15, columnspan = 10, rowspan = 13, ipady = 16,)
+    l_panel_source.grid(row = 1, column = 1, columnspan = 10, rowspan = 13, pady = 16)
     l_panel_processed.grid(row = 0, column = 15, columnspan = 10, rowspan = 13,)
 
 
@@ -356,13 +369,9 @@ def main():
     scroll_console.grid(row = 15, column = 20, rowspan = 5, sticky=N+S) 
     #endregion
 
-    print(root.grid_size()) # Отладка
 
 
     root.mainloop()
-
-
-    
 
 
 
