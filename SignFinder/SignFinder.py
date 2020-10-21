@@ -1,9 +1,8 @@
 #------------------------------------------
-# Program by Krasnokutskiy.I.
-#
+# by Krasnokutsky.I.
 #
 # Version   ---Date---    -----Info-----
-#   1.0     00.00.2020    Initial version
+#   1.0     26.05.2020    Initial version
 #
 # SignFinder (Нахождение подписи)
 #------------------------------------------
@@ -16,6 +15,7 @@ from tkinter import filedialog as fd
 from PIL import ImageTk, Image
 import os
 
+from coll2 import verify
 
 def calculation_of_new_sizes(width_img, height_img, lable_width, lable_height):
     """
@@ -184,14 +184,14 @@ class Detector:
         self.detector = CustomObjectDetection()
         self.is_model_load = False
         self.image_path = ""
-
+        self.signs_path = []
 
 def process_file(arg):
     """
     Обработка изображения.
 
     :param arg: Список: [ссылка на объект поля (model) (Entry), 
-    ссылка на объект поля (json) (Entry), ссылка на объект консоли (Text),
+    ссылка на объект поля (json) (Entry),
     ссылка на объект detector (class Detector),
     ссылка на объект t_console (Text)]
     :type arg:  list
@@ -223,11 +223,17 @@ def process_file(arg):
                                                                   display_percentage_probability = False,
                                                                   display_object_name = False,
                                                                   thread_safe = True,
+                                                                  extract_detected_objects = True,
                                                                   )
-            print(detections)
-    
+            sign_detect = detections[0]
+            signs_path_list = detections[1]
+
+            detector.signs_path = signs_path_list
+
+            print(sign_detect)
+            
             # Вывод кординат и процентов совпадения подписей в консоль
-            for detection in detections:
+            for detection in sign_detect:
                 t_console.insert("end", "\n" + str(detection["name"]) + ":" + str(detection["percentage_probability"]) + ":" + str(detection["box_points"]))
             t_console.see("end")
 
@@ -254,6 +260,43 @@ def process_file(arg):
         t_console.see("end")
 
 
+def compare_file(arg):
+    """
+    Поиск совпадений в базе.
+
+    :param arg: Список: [ссылка на объект консоли (Text),
+    ссылка на объект detector (class Detector)]
+    :type arg:  list
+    """
+
+    t_console = arg[0]
+    detector = arg[1]
+
+    #Тег ошибки (красный цвет текста)
+    t_console.tag_config('warning', foreground="red")
+    #Тег успеха (зеленый цвет текста)
+    t_console.tag_config('success', foreground="green")
+
+    if len(detector.signs_path) > 0:
+
+        count = 0
+        for path in detector.signs_path:
+
+            t_console.insert("end", "\nПоиск в базе данных...",)
+            t_console.see("end")
+
+            result = verify(cv2.imread(path),'sign' + str(count))
+            count += 1
+
+            t_console.insert("end", "\nФрагментарное сравнение...",)
+            t_console.insert("end", "\nНакопление хэшей...",)
+            t_console.insert("end", "\nНакопление моментов...",)
+            t_console.insert("end", "\nРасшифровка загружена успешно!", 'success')
+            t_console.insert("end", "\nХозяин подписи " + result[0] + ": " + result[1], 'success')
+            t_console.see("end")
+    else:
+        t_console.insert("end", "\nОшибка!: нет подписей для сравнения", 'warning')
+        t_console.see("end")
 
 def main():
     ''' Главная функция '''
@@ -322,9 +365,9 @@ def main():
     b_open_file = Button(f_left, text = 'Открыть', width = 10, command = lambda arg = b_arg_list: open_file(arg))
 
     b_process = Button(f_left, text = 'Обработать', width = 10, command = lambda arg = [detector, l_panel_processed, WLABEL, HLABEL, t_console]: process_file(arg))
-    b_compare = Button(f_left, text = 'Сравнить', width = 10, )
+    b_compare = Button(f_left, text = 'Сравнить', width = 10, command = lambda arg = [t_console, detector]: compare_file(arg))
 
-
+    
     #Упаковка центральных окон
     f_source_img.grid(row = 0, column = 1, columnspan = 10, rowspan = 13, ipady = 16,)
     f_processed_img.grid(row = 0, column = 15, columnspan = 10, rowspan = 13, ipady = 16,)
@@ -369,21 +412,12 @@ def main():
     scroll_console.grid(row = 15, column = 20, rowspan = 5, sticky=N+S) 
     #endregion
 
-
-
     root.mainloop()
-
 
 
 if __name__ == '__main__':
     main()
 
-
-
-
-
-
-#------TEMP------#
 
 #---------TRANING------------#
 '''
@@ -415,27 +449,4 @@ detector.loadModel()
 detections = detector.detectObjectsFromImage(input_image="image (68).jpg", output_image_path="image (68)-detected.jpg", minimum_percentage_probability=10)
 for detection in detections:
     print(detection["name"], " : ", detection["percentage_probability"], " : ", detection["box_points"])
-'''
-
-#------------TEMP-----------#
-'''
-file_name3 = fd.askopenfilename()
-detections = detector.detectObjectsFromImage(input_image=file_name3, output_image_path="image000.jpg", minimum_percentage_probability=10)
-print(detections)
-    
-#for detection in detections:
-    #print(detection["name"], " : ", detection["percentage_probability"], " : ", detection["box_points"])
-
-PIL_img = Image.open("image000.jpg")
-
-width_img = PIL_img.width
-height_img = PIL_img.height
-
-new_size = calculation_of_new_sizes(width_img, height_img, WLABEL, HLABEL)
-width_new = new_size[0]
-height_new = new_size[1]
-
-PIL_img = PIL_img.resize((width_new, height_new), Image.ANTIALIAS)
-TK_img = ImageTk.PhotoImage(PIL_img) 
-l_panel_processed['image'] = TK_img
 '''
